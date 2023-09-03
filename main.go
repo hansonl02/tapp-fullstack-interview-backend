@@ -14,7 +14,7 @@ func main() {
 	var log *zap.Logger
 	log, _ = zap.NewDevelopment()
 
-	OpenAIApiKey := "TODO: Insert OpenAI Key"
+	OpenAIApiKey := "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"
 	// create gpt client
 	gptClient := gogpt.NewClient(OpenAIApiKey)
 
