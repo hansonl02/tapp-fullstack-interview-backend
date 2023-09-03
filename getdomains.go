@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
@@ -31,8 +30,7 @@ func (a *App) GetDomains(c *fiber.Ctx) error {
 	}
 
 	prompt := fmt.Sprintf(`Generate a comma-separated list of twenty potential website domains for my business named %s, in CSV format with the data and nothing else.`, name.Name)
-	client := gogpt.NewClient("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")
-	resp, err := client.CreateChatCompletion(
+	resp, err := a.GptClient.CreateChatCompletion(
 		c.Context(),
 		gogpt.ChatCompletionRequest{
 			Model: gogpt.GPT3Dot5Turbo,
@@ -61,7 +59,7 @@ func (a *App) GetDomains(c *fiber.Ctx) error {
 	domains = strings.ReplaceAll(domains, "\n", "")
 
 	requestURL := fmt.Sprintf(`https://domains.usestyle.ai/api/v1/availability?domains=%s`, domains)
-	res, err := http.Get(requestURL)
+	res, err := a.HttpClient.Get(requestURL)
 	if err != nil {
 		a.Log.Error("Failed during availability API call", zap.Error(err))
 		return c.JSON(ErrorResponse("Failed during availability API call"))
